@@ -1,17 +1,36 @@
-import logo from "./logo.svg";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./App.css";
 
 function App() {
+  const [provinces, setProvinces] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/provinces")
+      .then(response => {
+        setProvinces(response.data.data); // sesuaikan dengan struktur respons Laravel kamu
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Gagal mengambil data:", error);
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-          Learn React.Js
-        </a>
+        <h1>Daftar Provinsi</h1>
+        {loading ? (
+          <p>Memuat data...</p>
+        ) : (
+          <ul>
+            {provinces.map((province) => (
+              <li key={province.id}>{province.name}</li>
+            ))}
+          </ul>
+        )}
       </header>
     </div>
   );
